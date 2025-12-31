@@ -20,12 +20,16 @@ services:
     #pull'er fra mit ghcr image
     image: ghcr.io/sumayaiaden1/tekdemo2
     restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     ports:
       - "127.0.0.1:8081:8080"
     depends_on:
       db:
         condition: service_healthy
-
 
 volumes:
   db_data:
