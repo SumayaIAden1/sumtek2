@@ -21,6 +21,22 @@ jobs:
           java-version: "21"
           distribution: "temurin"
 
-      - name: Run tests
-        run: mvn -B test
+      # Cache 3rd-party Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
 
+      # Cache .class files (build output)
+      - name: Cache compiled classes
+        uses: actions/cache@v4
+        with:
+          path: target
+          key: classes-${{ runner.os }}-${{ github.sha }}
+
+
+      - name: Run tests
+        run: mvn -B test # -B for batch mode, ingen bruger input

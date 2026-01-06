@@ -1,0 +1,41 @@
+name: CI + build image
+
+on:
+  push:
+    branches: ["main"]
+
+  pull_request:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/sumayaiaden1/tekdemo2
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permission:
+      contents: read
+      packages: write
+
+  steps:
+    - name: Checkout Repository
+      uses: actions@checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0, 2025-08-11
+
+    - name: Log in to GHCR
+      uses: docker/login@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0 2025-08-04
+      with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name:
+        uses: docker/build-push-action@v6
+        with:
+        content: .
+        push: true
+        tags: |
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
